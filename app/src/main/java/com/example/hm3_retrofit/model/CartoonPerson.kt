@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class CartoonPerson(
 
 
-    // todo сюда прописать данные которые будем тянуть  с апи
-    // todo https://youtu.be/IDVxFjLeecA?t=10566
+    // сюдп пишем данные которые будем тянуть  с апи
+    //  https://youtu.be/IDVxFjLeecA?t=10566
 
     @SerializedName("id")
     val idApi: Int,
@@ -19,7 +19,7 @@ data class CartoonPerson(
     )
 
 
-data class ResponceApi(
+data class ResponseApi(
 
     val results: List<CartoonPerson>
 

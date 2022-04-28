@@ -21,6 +21,10 @@
         android:name="com.example.hm3_retrofit.fragments.PersonDetailsFragment"
         tools:layout="@layout/fragment_person_details">
 
+        <argument
+            android:name="key_id"
+           />
+
     </fragment>
 
 </navigation>

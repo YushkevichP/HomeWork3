@@ -10,8 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hm3_retrofit.adapter.PersonAdapter
 import com.example.hm3_retrofit.databinding.FragmentListBinding
-import com.example.hm3_retrofit.model.CartoonPerson
-import com.example.hm3_retrofit.model.ResponceApi
+import com.example.hm3_retrofit.model.ResponseApi
 import com.example.hm3_retrofit.retrofit.RickMortyService
 
 
@@ -25,7 +24,7 @@ class ListFragment : Fragment() {
 
 
     private val myAdapter = PersonAdapter()
-    private var currentRequest: Call<ResponceApi>? = null
+    private var currentRequest: Call<ResponseApi>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,9 +42,10 @@ class ListFragment : Fragment() {
 
         //https://youtu.be/IDVxFjLeecA?t=12449
 
-        val request = RickMortyService.personApi.getUsers()
-        request.enqueue(object : Callback<ResponceApi> {
-            override fun onResponse(call: Call<ResponceApi>, response: Response<ResponceApi>) {
+        val request = RickMortyService.personApi.getUsers(1)
+        request.enqueue(object : Callback<ResponseApi> {
+
+            override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
                 if (response.isSuccessful) {
                     val persons = response.body()?.results
 
@@ -60,7 +60,7 @@ class ListFragment : Fragment() {
                 currentRequest = null
             }
 
-            override fun onFailure(call: Call<ResponceApi>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
                 Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT)
                     .show()
                 currentRequest = null

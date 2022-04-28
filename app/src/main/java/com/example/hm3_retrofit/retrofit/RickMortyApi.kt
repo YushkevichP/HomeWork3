@@ -1,11 +1,12 @@
 package com.example.hm3_retrofit.retrofit
 
 
-import com.example.hm3_retrofit.model.ResponceApi
+import com.example.hm3_retrofit.model.ResponseApi
 import com.example.hm3_retrofit.model.PersonDetails
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 //https://youtu.be/IDVxFjLeecA?t=10822
 
@@ -13,9 +14,9 @@ interface RickMortyApi {
 
     @GET("character")
     fun getUsers(
-       // @Query("page") page: Int,
+        @Query("page") page: Int,
 
-    ): Call<ResponceApi>
+        ): Call<ResponseApi>
 
     @GET("character/{id}")
     fun getUserDetails(

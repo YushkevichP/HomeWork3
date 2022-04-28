@@ -1,4 +1,5 @@
 package com.example.hm3_retrofit.adapter
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,7 +9,7 @@ import com.example.hm3_retrofit.databinding.ItemPersonBinding
 import com.example.hm3_retrofit.model.CartoonPerson
 
 class PersonAdapter(
-    //context: Context,
+   // context: Context,
     //private val onUserClicked: (CartoonPerson) -> Unit
 ) : ListAdapter<CartoonPerson, PersonViewHolder>(DIFF_CALLBACK) {
 
@@ -17,7 +18,7 @@ class PersonAdapter(
 
         return PersonViewHolder(
             binding = ItemPersonBinding.inflate(layoutInflater, parent, false)
-            //   onUserClicked = onUserClicked
+            //onUserClicked = onUserClicked
         )
     }
 

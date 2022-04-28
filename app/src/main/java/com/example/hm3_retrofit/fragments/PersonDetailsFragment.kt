@@ -6,15 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.hm3_retrofit.databinding.FragmentPersonDetailsBinding
 import com.example.hm3_retrofit.model.PersonDetails
-import com.example.hm3_retrofit.model.ResponceApi
 import com.example.hm3_retrofit.retrofit.RickMortyService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
+
+//TODO через сейв аргс передать во второй фрагмент адйшику, по которой кликаю и там уже отобразить
+// + навести красоту и видео 8 пересмотреть и добавить фич
 
 class PersonDetailsFragment : Fragment() {
 
@@ -24,6 +27,7 @@ class PersonDetailsFragment : Fragment() {
     }
 
     private var currentRequest: Call<PersonDetails>? = null
+    private val args by navArgs<PersonDetailsFragmentArgs>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +42,8 @@ class PersonDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+     //   var counter = args.keyId
         val tempId = 2
         val request = RickMortyService.personApi.getUserDetails(tempId)
 
