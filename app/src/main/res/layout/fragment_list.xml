@@ -10,8 +10,9 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="My toolbar"
+        app:title="Rick and Morty"
         app:navigationIcon="@android:drawable/ic_delete"
+        android:src="?attr/homeAsUpIndicator"
         android:background="@color/black"
         app:titleTextColor="@color/white"
         />

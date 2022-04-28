@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.example.hm3_retrofit.databinding.FragmentPersonDetailsBinding
 import com.example.hm3_retrofit.model.PersonDetails
@@ -61,9 +62,12 @@ class PersonDetailsFragment : Fragment() {
                         personGender.text = "Пол персонажа: ${tempPerson.gender}"
                         personName.text = "Имя персонажа: ${tempPerson.name}"
                         personStatus.text = "Жив или нет: ${tempPerson.status}"
-                        toolbar.setOnClickListener {
-                            findNavController().popBackStack()
-                        }
+                        toolbar.setupWithNavController(findNavController()) // back_arrow
+
+
+//                        toolbar.setOnClickListener {
+//                            findNavController().popBackStack()
+//                        }
                     }
                 } else {
                     HttpException(response).message()
