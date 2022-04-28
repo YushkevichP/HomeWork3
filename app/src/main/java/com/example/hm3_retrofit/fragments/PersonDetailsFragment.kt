@@ -22,9 +22,10 @@ import retrofit2.Response
 class PersonDetailsFragment : Fragment() {
 
     private var _binding: FragmentPersonDetailsBinding? = null
-    private val binding: FragmentPersonDetailsBinding get() = requireNotNull(_binding){
-        "VIEW WAS DESTROYED"
-    }
+    private val binding: FragmentPersonDetailsBinding
+        get() = requireNotNull(_binding) {
+            "VIEW WAS DESTROYED"
+        }
 
     private var currentRequest: Call<PersonDetails>? = null
     private val args by navArgs<PersonDetailsFragmentArgs>()
@@ -43,31 +44,29 @@ class PersonDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-     //   var counter = args.keyId
-        val tempId = 2
-        val request = RickMortyService.personApi.getUserDetails(tempId)
+        val counter = args.keyId
+        val request = RickMortyService.personApi.getUserDetails(counter)
 
         request.enqueue(object : Callback<PersonDetails> {
 
             override fun onResponse(call: Call<PersonDetails>, response: Response<PersonDetails>) {
-               if (response.isSuccessful){
-                   val tempPerson = response.body()?: return
+                if (response.isSuccessful) {
+                    val tempPerson = response.body() ?: return
 
-                   with(binding){
-                       imageUserFragment.load(tempPerson.avatarApiDetails)
-                       personGender.text = tempPerson.gender
-                       personName.text = tempPerson.name
-                       personStatus.text = tempPerson.status
-                   }
-               }
-                else{
+                    with(binding) {
+                        imageUserFragment.load(tempPerson.avatarApiDetails)
+                        personGender.text = "Пол персонажа: ${tempPerson.gender}"
+                        personName.text = "Имя персонажа: ${tempPerson.name}"
+                        personStatus.text = "Жив или нет: ${tempPerson.status}"
+                    }
+                } else {
                     HttpException(response).message()
-               }
+                }
                 currentRequest = null
             }
 
             override fun onFailure(call: Call<PersonDetails>, t: Throwable) {
-                Toast.makeText(requireContext(),t.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                 currentRequest = null
             }
 
@@ -77,7 +76,7 @@ class PersonDetailsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding =null
+        _binding = null
         currentRequest?.cancel()
     }
 }

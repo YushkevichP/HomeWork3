@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hm3_retrofit.adapter.PersonAdapter
 import com.example.hm3_retrofit.databinding.FragmentListBinding
@@ -23,7 +24,12 @@ class ListFragment : Fragment() {
         }
 
 
-    private val myAdapter = PersonAdapter()
+    private val myAdapter = PersonAdapter() {
+       findNavController().navigate(
+           ListFragmentDirections.toDetails(it.idApi)
+       )
+
+    }
     private var currentRequest: Call<ResponseApi>? = null
 
     override fun onCreateView(
@@ -50,6 +56,7 @@ class ListFragment : Fragment() {
                     val persons = response.body()?.results
 
                     with(binding) {
+
                         myAdapter.submitList(persons)
                         recyclerView.adapter = myAdapter
                         recyclerView.layoutManager = LinearLayoutManager(view.context)

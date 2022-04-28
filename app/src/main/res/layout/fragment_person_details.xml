@@ -35,6 +35,7 @@
 
         <TextView
             android:id="@+id/person_name"
+            android:text="SECOND FRAGMENT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"

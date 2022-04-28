@@ -10,15 +10,15 @@ import com.example.hm3_retrofit.model.CartoonPerson
 
 class PersonAdapter(
    // context: Context,
-    //private val onUserClicked: (CartoonPerson) -> Unit
+    private val onUserClicked: (CartoonPerson) -> Unit
 ) : ListAdapter<CartoonPerson, PersonViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PersonViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
 
         return PersonViewHolder(
-            binding = ItemPersonBinding.inflate(layoutInflater, parent, false)
-            //onUserClicked = onUserClicked
+            binding = ItemPersonBinding.inflate(layoutInflater, parent, false),
+            onUserClicked = onUserClicked
         )
     }
 
