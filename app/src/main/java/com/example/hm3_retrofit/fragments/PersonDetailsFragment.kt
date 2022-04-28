@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.hm3_retrofit.databinding.FragmentPersonDetailsBinding
@@ -43,14 +44,16 @@ class PersonDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val counter = args.keyId
+
         val request = RickMortyService.personApi.getUserDetails(counter)
 
         request.enqueue(object : Callback<PersonDetails> {
 
             override fun onResponse(call: Call<PersonDetails>, response: Response<PersonDetails>) {
+
                 if (response.isSuccessful) {
+
                     val tempPerson = response.body() ?: return
 
                     with(binding) {
@@ -58,6 +61,9 @@ class PersonDetailsFragment : Fragment() {
                         personGender.text = "Пол персонажа: ${tempPerson.gender}"
                         personName.text = "Имя персонажа: ${tempPerson.name}"
                         personStatus.text = "Жив или нет: ${tempPerson.status}"
+                        toolbar.setOnClickListener {
+                            findNavController().popBackStack()
+                        }
                     }
                 } else {
                     HttpException(response).message()
