@@ -18,16 +18,13 @@ class PersonViewHolder(
     fun bind(person: CartoonPerson) {
 
         with(binding) {
-
-            imageView.load(person.imageApi){
+            imageView.load(person.imageApi) {
                 scale(Scale.FILL)
                 size(ViewSizeResolver(root))
             }
 
             textNameView.text = person.nameApi
-
-            root.setOnClickListener{
-
+            root.setOnClickListener {
                 onUserClicked(person)
             }
         }

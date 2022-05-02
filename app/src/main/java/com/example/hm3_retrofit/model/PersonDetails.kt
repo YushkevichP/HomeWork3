@@ -11,5 +11,4 @@ data class PersonDetails(
     // look at the api
     val gender: String,
     val status: String,
-
-    )
+)

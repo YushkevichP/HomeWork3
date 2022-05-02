@@ -46,25 +46,19 @@ class PersonDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val counter = args.keyId
-
         val request = RickMortyService.personApi.getUserDetails(counter)
 
         request.enqueue(object : Callback<PersonDetails> {
-
             override fun onResponse(call: Call<PersonDetails>, response: Response<PersonDetails>) {
 
                 if (response.isSuccessful) {
-
                     val tempPerson = response.body() ?: return
-
                     with(binding) {
                         imageUserFragment.load(tempPerson.avatarApiDetails)
                         personGender.text = "Пол персонажа: ${tempPerson.gender}"
                         personName.text = "Имя персонажа: ${tempPerson.name}"
                         personStatus.text = "Жив или нет: ${tempPerson.status}"
                         toolbar.setupWithNavController(findNavController()) // back_arrow
-
-
 //                        toolbar.setOnClickListener {
 //                            findNavController().popBackStack()
 //                        }
@@ -79,9 +73,7 @@ class PersonDetailsFragment : Fragment() {
                 Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                 currentRequest = null
             }
-
         })
-
     }
 
     override fun onDestroyView() {
