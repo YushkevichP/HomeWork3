@@ -36,6 +36,8 @@ class ListFragment : Fragment() {
 
     private var currentRequest: Call<ResponseApi>? = null
     private var pageCounter = 1
+    private var isLoading = false
+    private var finalFResultlist: List<ItemType> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,41 +47,57 @@ class ListFragment : Fragment() {
         return FragmentListBinding.inflate(inflater, container, false)
             .also { _binding = it }
             .root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initRecycler(view)
-        makeRequest()
+        val layoutManager = LinearLayoutManager(view.context)
+        //recycler init
+        with(binding) {
+            recyclerView.addSpaceDecoration(resources.getDimensionPixelSize(R.dimen.bottom_space))
+            recyclerView.adapter = myAdapter
+            recyclerView.layoutManager = layoutManager
+        }
+
         swipeRefresh(view)
+        makeRequest(1)
+
+        with(binding) {
+            recyclerView.addPaginationScrollListener(layoutManager, 2) {
+                if (!isLoading) {
+                    isLoading = true
+                    makeRequest(pageCounter++)
+                    isLoading = false
+                }
+            }
+        }
     }
 
     private fun swipeRefresh(view: View) {
         binding.swipeLayout.setOnRefreshListener {
-            //  myAdapter.submitList(emptyList())  -- это чтоб обнулить ресайклер - сделать пустым.
-            makeRequest()
+
+            makeRequest(1)
             binding.swipeLayout.isRefreshing = false // крутелка убирается
         }
     }
 
-    private fun initRecycler(view: View) {
-        with(binding) {
-            recyclerView.addSpaceDecoration(resources.getDimensionPixelSize(R.dimen.bottom_space))
-            recyclerView.adapter = myAdapter
-            recyclerView.layoutManager = LinearLayoutManager(view.context)
-        }
-    }
 
-    private fun makeRequest() { //TODO need to return list of persons
-        val request = RickMortyService.personApi.getUsers(pageCounter)
+    private fun makeRequest(pageForRequest: Int) { //TODO need to return list of persons
+
+        val request = RickMortyService.personApi.getUsers(pageForRequest)
         request.enqueue(object : Callback<ResponseApi> {
-            override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
+            override fun onResponse(
+                call: Call<ResponseApi>,
+                response: Response<ResponseApi>,
+            ) {
                 if (response.isSuccessful) {
                     val persons = response.body()?.results
                     val resultList = persons?.plus(ItemType.Loading) ?: return
-
-                    myAdapter.submitList(resultList)
+                    val currentList = myAdapter.currentList.dropLast(1)
+                    finalFResultlist = currentList + resultList
+                    myAdapter.submitList(finalFResultlist)
 
                 } else {
                     HttpException(response).message()
@@ -91,10 +109,8 @@ class ListFragment : Fragment() {
                 Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT)
                     .show()
                 currentRequest = null
-
             }
         })
-        currentRequest = request
     }
 
     override fun onDestroyView() {
