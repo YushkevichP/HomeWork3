@@ -35,7 +35,6 @@ fun RecyclerView.addPaginationScrollListener(
 
             val totalItemCount = layoutManager.itemCount
             val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-
             if (dy!=0 && totalItemCount<=(lastVisibleItem+itemsToLoad)){
                 recyclerView.post(onLoadMore)
             }

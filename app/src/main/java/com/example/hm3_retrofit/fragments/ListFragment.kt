@@ -39,7 +39,6 @@ class ListFragment : Fragment() {
     private var isLoading = false
     private var finalFResultlist: List<ItemType> = emptyList()
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

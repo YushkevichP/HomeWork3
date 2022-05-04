@@ -44,7 +44,6 @@ class PersonDetailsFragment : Fragment() {
 
         val counter = args.keyId
         currentRequest = RickMortyService.personApi.getUserDetails(counter)
-
         currentRequest?.enqueue(object : Callback<PersonDetails> {
             override fun onResponse(call: Call<PersonDetails>, response: Response<PersonDetails>) {
 
