@@ -34,10 +34,11 @@ class ListFragment : Fragment() {
         }
     }
 
-    private var currentRequest: Call<ResponseApi>? = null
+    private var requesrCall: Call<ResponseApi>? = null
     private var pageCounter = 1
     private var isLoading = false
     private var finalFResultlist: List<ItemType> = emptyList()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,7 +62,7 @@ class ListFragment : Fragment() {
             recyclerView.layoutManager = layoutManager
         }
 
-        swipeRefresh(view)
+        swipeRefresh()
         makeRequest(1)
 
         with(binding) {
@@ -75,40 +76,43 @@ class ListFragment : Fragment() {
         }
     }
 
-    private fun swipeRefresh(view: View) {
+    private fun swipeRefresh() {
         binding.swipeLayout.setOnRefreshListener {
-
-            makeRequest(1)
+            //todo допилить обнуление общего листа по свайпу
+            pageCounter=1
+            makeRequest(pageCounter)
+         //   finalFResultlist = emptyList()
             binding.swipeLayout.isRefreshing = false // крутелка убирается
         }
     }
 
+    private fun makeRequest(pageForRequest: Int) {
 
-    private fun makeRequest(pageForRequest: Int) { //TODO need to return list of persons
-
-        val request = RickMortyService.personApi.getUsers(pageForRequest)
-        request.enqueue(object : Callback<ResponseApi> {
+        requesrCall = RickMortyService.personApi.getUsers(pageForRequest)
+        requesrCall?.enqueue(object : Callback<ResponseApi> {
             override fun onResponse(
                 call: Call<ResponseApi>,
                 response: Response<ResponseApi>,
             ) {
                 if (response.isSuccessful) {
+
                     val persons = response.body()?.results
                     val resultList = persons?.plus(ItemType.Loading) ?: return
                     val currentList = myAdapter.currentList.dropLast(1)
                     finalFResultlist = currentList + resultList
+
                     myAdapter.submitList(finalFResultlist)
 
                 } else {
                     HttpException(response).message()
                 }
-                currentRequest = null
+                requesrCall = null
             }
 
             override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
                 Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT)
                     .show()
-                currentRequest = null
+                requesrCall = null
             }
         })
     }
@@ -116,6 +120,6 @@ class ListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        currentRequest?.cancel()
+        requesrCall?.cancel()
     }
 }

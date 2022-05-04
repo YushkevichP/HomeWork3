@@ -18,9 +18,6 @@ import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
 
-//TODO через сейв аргс передать во второй фрагмент адйшику, по которой кликаю и там уже отобразить
-// + навести красоту и видео 8 пересмотреть и добавить фич
-
 class PersonDetailsFragment : Fragment() {
 
     private var _binding: FragmentPersonDetailsBinding? = null
@@ -46,9 +43,9 @@ class PersonDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val counter = args.keyId
-        val request = RickMortyService.personApi.getUserDetails(counter)
+        currentRequest = RickMortyService.personApi.getUserDetails(counter)
 
-        request.enqueue(object : Callback<PersonDetails> {
+        currentRequest?.enqueue(object : Callback<PersonDetails> {
             override fun onResponse(call: Call<PersonDetails>, response: Response<PersonDetails>) {
 
                 if (response.isSuccessful) {
