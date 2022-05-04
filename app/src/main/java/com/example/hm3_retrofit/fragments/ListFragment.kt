@@ -1,6 +1,5 @@
 package com.example.hm3_retrofit.fragments
 
-import android.graphics.Rect
 import retrofit2.*
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,10 +9,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.hm3_retrofit.R
-import com.example.hm3_retrofit.adapter.PersonAdapter
+import com.example.hm3_retrofit.adapter.ItemAdapter
 import com.example.hm3_retrofit.databinding.FragmentListBinding
+import com.example.hm3_retrofit.model.ItemType
 import com.example.hm3_retrofit.model.ResponseApi
 import com.example.hm3_retrofit.retrofit.RickMortyService
 
@@ -26,20 +25,17 @@ class ListFragment : Fragment() {
             "View was destroyed"
         }
 
-
     private val myAdapter by lazy {
-
-        PersonAdapter() {
+        ItemAdapter { item ->
+            val personItem = item as? ItemType.CartoonPerson ?: return@ItemAdapter
             findNavController().navigate(
-                ListFragmentDirections.toDetails(it.idApi)
+                ListFragmentDirections.toDetails(personItem.idApi)
             )
         }
-
     }
 
-
     private var currentRequest: Call<ResponseApi>? = null
-    private var pageCounter = 3
+    private var pageCounter = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,12 +51,14 @@ class ListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initRecycler(view)
-        makeRequest(view)
+        makeRequest()
+        swipeRefresh(view)
+    }
 
+    private fun swipeRefresh(view: View) {
         binding.swipeLayout.setOnRefreshListener {
-          //  myAdapter.submitList(emptyList())  -- это чтоб обнулить ресайклер - сделать пустым.
-            pageCounter = 1
-            makeRequest(view)
+            //  myAdapter.submitList(emptyList())  -- это чтоб обнулить ресайклер - сделать пустым.
+            makeRequest()
             binding.swipeLayout.isRefreshing = false // крутелка убирается
         }
     }
@@ -68,23 +66,21 @@ class ListFragment : Fragment() {
     private fun initRecycler(view: View) {
         with(binding) {
             recyclerView.addSpaceDecoration(resources.getDimensionPixelSize(R.dimen.bottom_space))
-//            myAdapter.submitList(emptyList())
-//            recyclerView.adapter = myAdapter
-//            recyclerView.layoutManager = LinearLayoutManager(view.context)
+            recyclerView.adapter = myAdapter
+            recyclerView.layoutManager = LinearLayoutManager(view.context)
         }
     }
 
-    private fun makeRequest(view: View) {
+    private fun makeRequest() { //TODO need to return list of persons
         val request = RickMortyService.personApi.getUsers(pageCounter)
         request.enqueue(object : Callback<ResponseApi> {
             override fun onResponse(call: Call<ResponseApi>, response: Response<ResponseApi>) {
                 if (response.isSuccessful) {
                     val persons = response.body()?.results
-                    with(binding) {
-                        myAdapter.submitList(persons)
-                        recyclerView.adapter = myAdapter
-                        recyclerView.layoutManager = LinearLayoutManager(view.context)
-                    }
+                    val resultList = persons?.plus(ItemType.Loading) ?: return
+
+                    myAdapter.submitList(resultList)
+
                 } else {
                     HttpException(response).message()
                 }

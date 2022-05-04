@@ -22,3 +22,4 @@ fun RecyclerView.addSpaceDecoration(bottomSpace: Int) {
         }
     })
 }
+
