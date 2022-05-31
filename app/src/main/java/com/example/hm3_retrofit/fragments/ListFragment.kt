@@ -76,6 +76,7 @@ class ListFragment : Fragment() {
     }
 
     private fun swipeRefresh() {
+
         binding.swipeLayout.setOnRefreshListener {
             //todo допилить обнуление общего листа по свайпу
             pageCounter=1
