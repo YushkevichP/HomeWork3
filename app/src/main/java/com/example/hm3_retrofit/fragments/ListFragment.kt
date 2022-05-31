@@ -59,35 +59,44 @@ class ListFragment : Fragment() {
             recyclerView.addSpaceDecoration(resources.getDimensionPixelSize(R.dimen.bottom_space))
             recyclerView.adapter = adapter
             recyclerView.layoutManager = layoutManager
+            toolbar.setOnClickListener {
+                refreshListToStart()
+            }
         }
 
         swipeRefresh()
-        makeRequest(1) { }
+        makeRequest(pageCounter)
 
         with(binding) {
             recyclerView.addPaginationScrollListener(layoutManager, 2) {
                 if (!isLoading) {
                     isLoading = true
-                    makeRequest(pageCounter) {}
+                    makeRequest(pageCounter)
                 }
             }
         }
     }
 
+    private fun refreshListToStart(){
+        pageCounter = 1
+        finalFResultlist = emptyList()
+        adapter.submitList(finalFResultlist)
+        makeRequest(pageCounter)
+
+    }
+
     private fun swipeRefresh() {
-
         binding.swipeLayout.setOnRefreshListener {
-
-            // pageCounter = 1
-            val refreshCoun = 1
-            //finalFResultlist = emptyList()
-            adapter.submitList(emptyList())
-            makeRequest(refreshCoun) {}
+// при свайпе обновляем и сетим пустой лист и сразу делаем запрос на первую страничку
+            pageCounter = 1
+            finalFResultlist = emptyList()
+            adapter.submitList(finalFResultlist)
+            makeRequest(pageCounter)
             binding.swipeLayout.isRefreshing = false // крутелка убирается
         }
     }
 
-    private fun makeRequest(pageForRequest: Int, function: () -> Unit) {
+    private fun makeRequest(pageForRequest: Int) {
 
         requesrCall = RickMortyService.personApi.getUsers(pageForRequest)
         requesrCall?.enqueue(object : Callback<ResponseApi> {
