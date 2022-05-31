@@ -24,6 +24,7 @@ class PersonViewHolder(
                 size(ViewSizeResolver(root))
             }
 
+            idPerson.text = person.idApi.toString()
             textNameView.text = person.nameApi
             root.setOnClickListener {
                 onUserClicked(person)

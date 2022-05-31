@@ -15,6 +15,8 @@ import com.example.hm3_retrofit.databinding.FragmentListBinding
 import com.example.hm3_retrofit.model.ItemType
 import com.example.hm3_retrofit.model.ResponseApi
 import com.example.hm3_retrofit.retrofit.RickMortyService
+import kotlinx.coroutines.delay
+import kotlin.concurrent.thread
 
 
 class ListFragment : Fragment() {
@@ -77,7 +79,7 @@ class ListFragment : Fragment() {
         }
     }
 
-    private fun refreshListToStart(){
+    private fun refreshListToStart() {
         pageCounter = 1
         finalFResultlist = emptyList()
         adapter.submitList(finalFResultlist)
@@ -92,7 +94,6 @@ class ListFragment : Fragment() {
             finalFResultlist = emptyList()
             adapter.submitList(finalFResultlist)
             makeRequest(pageCounter)
-            binding.swipeLayout.isRefreshing = false // крутелка убирается
         }
     }
 
@@ -114,7 +115,7 @@ class ListFragment : Fragment() {
 
                     isLoading = false
                     pageCounter++
-
+                    binding.swipeLayout.isRefreshing = false
                 } else {
                     HttpException(response).message()
                 }
