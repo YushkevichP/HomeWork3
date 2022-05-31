@@ -25,8 +25,8 @@ class ListFragment : Fragment() {
             "View was destroyed"
         }
 
-    private val myAdapter by lazy {
-        ItemAdapter { item ->
+    private val adapter by lazy {
+        ItemAdapter(requireContext()) { item ->
             val personItem = item as? ItemType.CartoonPerson ?: return@ItemAdapter
             findNavController().navigate(
                 ListFragmentDirections.toDetails(personItem.idApi)
@@ -57,19 +57,18 @@ class ListFragment : Fragment() {
         //recycler init
         with(binding) {
             recyclerView.addSpaceDecoration(resources.getDimensionPixelSize(R.dimen.bottom_space))
-            recyclerView.adapter = myAdapter
+            recyclerView.adapter = adapter
             recyclerView.layoutManager = layoutManager
         }
 
         swipeRefresh()
-        makeRequest(1)
+        makeRequest(1) { }
 
         with(binding) {
             recyclerView.addPaginationScrollListener(layoutManager, 2) {
                 if (!isLoading) {
                     isLoading = true
-                    makeRequest(pageCounter++)
-                    isLoading = false
+                    makeRequest(pageCounter) {}
                 }
             }
         }
@@ -78,15 +77,17 @@ class ListFragment : Fragment() {
     private fun swipeRefresh() {
 
         binding.swipeLayout.setOnRefreshListener {
-            //todo допилить обнуление общего листа по свайпу
-            pageCounter=1
-            makeRequest(pageCounter)
-         //   finalFResultlist = emptyList()
+
+            // pageCounter = 1
+            val refreshCoun = 1
+            //finalFResultlist = emptyList()
+            adapter.submitList(emptyList())
+            makeRequest(refreshCoun) {}
             binding.swipeLayout.isRefreshing = false // крутелка убирается
         }
     }
 
-    private fun makeRequest(pageForRequest: Int) {
+    private fun makeRequest(pageForRequest: Int, function: () -> Unit) {
 
         requesrCall = RickMortyService.personApi.getUsers(pageForRequest)
         requesrCall?.enqueue(object : Callback<ResponseApi> {
@@ -98,10 +99,12 @@ class ListFragment : Fragment() {
 
                     val persons = response.body()?.results
                     val resultList = persons?.plus(ItemType.Loading) ?: return
-                    val currentList = myAdapter.currentList.dropLast(1)
+                    val currentList = adapter.currentList.dropLast(1)
                     finalFResultlist = currentList + resultList
+                    adapter.submitList(finalFResultlist)
 
-                    myAdapter.submitList(finalFResultlist)
+                    isLoading = false
+                    pageCounter++
 
                 } else {
                     HttpException(response).message()

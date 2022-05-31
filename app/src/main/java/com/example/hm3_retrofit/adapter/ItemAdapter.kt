@@ -13,7 +13,8 @@ import com.example.hm3_retrofit.model.ItemType
 
 
 class ItemAdapter(
-    private val onUserClicked: (ItemType) -> Unit,
+    context: Context,
+    private val onUserClicked: (ItemType.CartoonPerson) -> Unit,
 ) : ListAdapter<ItemType, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun getItemViewType(position: Int): Int {
@@ -22,9 +23,9 @@ class ItemAdapter(
             ItemType.Loading -> TYPE_LOADING
         }
     }
+    private val layoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
 
         return when (viewType) {
             TYPE_PERSON -> {

@@ -42,6 +42,8 @@ class PersonDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.toolbar.setupWithNavController(findNavController()) // back_arrow
+
         val counter = args.keyId
         currentRequest = RickMortyService.personApi.getUserDetails(counter)
         currentRequest?.enqueue(object : Callback<PersonDetails> {
@@ -54,10 +56,7 @@ class PersonDetailsFragment : Fragment() {
                         personGender.text = "Пол персонажа: ${tempPerson.gender}"
                         personName.text = "Имя персонажа: ${tempPerson.name}"
                         personStatus.text = "Жив или нет: ${tempPerson.status}"
-                        toolbar.setupWithNavController(findNavController()) // back_arrow
-//                        toolbar.setOnClickListener {
-//                            findNavController().popBackStack()
-//                        }
+
                     }
                 } else {
                     HttpException(response).message()
