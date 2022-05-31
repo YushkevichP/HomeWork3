@@ -12,11 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hm3_retrofit.R
 import com.example.hm3_retrofit.adapter.ItemAdapter
 import com.example.hm3_retrofit.databinding.FragmentListBinding
+import com.example.hm3_retrofit.model.CartoonPerson
 import com.example.hm3_retrofit.model.ItemType
-import com.example.hm3_retrofit.model.ResponseApi
+import com.example.hm3_retrofit.model.PersonsListApi
 import com.example.hm3_retrofit.retrofit.RickMortyService
-import kotlinx.coroutines.delay
-import kotlin.concurrent.thread
 
 
 class ListFragment : Fragment() {
@@ -29,17 +28,17 @@ class ListFragment : Fragment() {
 
     private val adapter by lazy {
         ItemAdapter(requireContext()) { item ->
-            val personItem = item as? ItemType.CartoonPerson ?: return@ItemAdapter
+            val personItem = item as? ItemType.Content ?: return@ItemAdapter
             findNavController().navigate(
-                ListFragmentDirections.toDetails(personItem.idApi)
+                ListFragmentDirections.toDetails(personItem.data.idApi)
             )
         }
     }
 
-    private var requesrCall: Call<ResponseApi>? = null
+    private var requesrCall: Call<PersonsListApi>? = null
     private var pageCounter = 1
     private var isLoading = false
-    private var finalFResultlist: List<ItemType> = emptyList()
+    private var finalFResultlist: List<ItemType<CartoonPerson>> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,17 +99,20 @@ class ListFragment : Fragment() {
     private fun makeRequest(pageForRequest: Int) {
 
         requesrCall = RickMortyService.personApi.getUsers(pageForRequest)
-        requesrCall?.enqueue(object : Callback<ResponseApi> {
+        requesrCall?.enqueue(object : Callback<PersonsListApi> {
             override fun onResponse(
-                call: Call<ResponseApi>,
-                response: Response<ResponseApi>,
+                call: Call<PersonsListApi>,
+                response: Response<PersonsListApi>,
             ) {
                 if (response.isSuccessful) {
-
-                    val persons = response.body()?.results
-                    val resultList = persons?.plus(ItemType.Loading) ?: return
+                    response.body()
+                    val persons = response.body()?.results // получаем список персон
+                    val content = persons?.map { // переводим его в наш айтем тайп
+                        ItemType.Content(it)
+                    }
+                    val resultList = content?.plus(ItemType.Loading) ?: return
                     val currentList = adapter.currentList.dropLast(1)
-                    finalFResultlist = currentList + resultList
+                    finalFResultlist = (currentList + resultList)
                     adapter.submitList(finalFResultlist)
 
                     isLoading = false
@@ -122,7 +124,7 @@ class ListFragment : Fragment() {
                 requesrCall = null
             }
 
-            override fun onFailure(call: Call<ResponseApi>, t: Throwable) {
+            override fun onFailure(call: Call<PersonsListApi>, t: Throwable) {
                 Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT)
                     .show()
                 requesrCall = null

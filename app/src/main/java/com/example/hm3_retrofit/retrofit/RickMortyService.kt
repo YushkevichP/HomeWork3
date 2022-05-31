@@ -15,7 +15,6 @@ object RickMortyService {
         retrofit.create<RickMortyApi>()
     }
 
-
     // https://youtu.be/IDVxFjLeecA?t=11972
     private fun provideRetrofit(): Retrofit {
         val client = OkHttpClient.Builder()
